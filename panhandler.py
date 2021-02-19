@@ -1,23 +1,23 @@
 from selenium import webdriver
 import time
 
-def scrape(streamerName):
+def scrape(streamerName, message):
     PATH = "./chromedriver.exe"
     driver = webdriver.Chrome(PATH)
-
     driver.get("https://www.twitch.tv/{}".format(streamerName))
 
-
-
     stored_users = []
-
-    # Seed stored_users
-    usernameFile = open("usernames.txt", "r+")
-    for line in usernameFile:
-        stored_users.append(line)
-
+    # Make files
+    usernameFile = open("usernames.txt", "a+")
     usernameFile.close()
 
+    # Seed stored_users
+    usernameFile = open("usernames.txt", "r")
+    for line in usernameFile:
+        stored_users.append(line)
+    usernameFile.close()
+
+    messagedelay = 0;
     while True:
         users = driver.find_elements_by_xpath('//*[@class="chat-author__display-name"]')
 
@@ -33,7 +33,10 @@ def scrape(streamerName):
                 # Always close your goddamn files
                 usernameFile.close()
 
-
+                messagedelay = messagedelay + 1
+                if messagedelay >= 7:
+                    print(message + userdata)
+                    messagedelay = 0
 
     time.sleep(15)
     driver.quit()
