@@ -4,7 +4,10 @@ import time
 def scrape(streamerName, message):
     PATH = "./chromedriver.exe"
     driver = webdriver.Chrome(PATH)
-    driver.get("https://www.twitch.tv/{}".format(streamerName))
+
+    driverUrl = "https://www.twitch.tv/{}".format(streamerName)
+    driver.get(driverUrl)
+
 
     stored_users = []
     # Make files
@@ -16,6 +19,13 @@ def scrape(streamerName, message):
     for line in usernameFile:
         stored_users.append(line)
     usernameFile.close()
+
+    time.sleep(2)
+    try:
+        playingVid = driver.find_element_by_xpath('//*[@class="video-player"]')
+    except Exception as e:
+        print("The username you entered is invalid: {}".format(e))
+        driver.close()
 
     messagedelay = 0;
     while True:
