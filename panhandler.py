@@ -4,7 +4,10 @@ import time
 def scrape(username, password, streamerName, message, userDelay):
     PATH = "./chromedriver.exe"
     driver = webdriver.Chrome(PATH)
-    driver.get("https://www.twitch.tv/{}".format(streamerName))
+
+    driverUrl = "https://www.twitch.tv/{}".format(streamerName)
+    driver.get(driverUrl)
+
 
     # login
     loginBtn = driver.find_element_by_xpath('//*[@data-a-target="login-button"]')
@@ -36,6 +39,13 @@ def scrape(username, password, streamerName, message, userDelay):
     # Hit 'Y' + RETURN to continue
     print("\nFinish login sequence. Enter 'y' to continue.")
     input()
+
+    time.sleep(2)
+    try:
+        playingVid = driver.find_element_by_xpath('//*[@class="video-player"]')
+    except Exception as e:
+        print("The username you entered is invalid: {}".format(e))
+        driver.close()
 
     messagedelay = 0;
     while True:
