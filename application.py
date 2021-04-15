@@ -16,9 +16,11 @@ usernameLabel = Label(root, text="Enter your Twitch username", pady=10)
 usernameLabel.configure(background='#404040', fg='#FFFFFF')
 usernameLabel.grid(row=1, column=0)
 
+credentials = open("credentials.txt", "r")
+
 username = Entry(root, width=40)
 username.grid(row=2, column=0)
-username.insert(0, "")
+username.insert(0, credentials.readline())
 
 passwordLabel = Label(root, text="Enter your Twitch password", pady=10)
 passwordLabel.configure(background='#404040', fg='#FFFFFF')
@@ -26,7 +28,9 @@ passwordLabel.grid(row=3, column=0)
 
 password = Entry(root, show='*', width=40)
 password.grid(row=4, column=0)
-password.insert(0, "")
+password.insert(0, credentials.readline())
+
+credentials.close()
 
 streamerLabel = Label(root, text="Enter a streamer's username", pady=10)
 streamerLabel.configure(background='#404040', fg='#FFFFFF')
@@ -52,7 +56,7 @@ def startScrape():
     message = streamermessage.get("1.0",END)
     userDelay = messageDelay.get()
     print("Collected user input values")
-    panhandle_thread = threading.Thread(target=executeScrape, name="Scraper", args=["panhandler404", password.get(), streamerName, message, userDelay])# args=[username.get(), password.get(), streamerName, message, userDelay])
+    panhandle_thread = threading.Thread(target=executeScrape, name="Scraper", args=[username.get(), password.get(), streamerName, message, userDelay])# args=[username.get(), password.get(), streamerName, message, userDelay])
     panhandle_thread.start()
     print("Scraper for {} is now running in the background.".format(streamerName))
     print("Message is: {}".format(message))

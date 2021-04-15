@@ -37,7 +37,7 @@ def scrape(username, password, streamerName, message, userDelay):
 
     # Probably need to complete the login yourself
     # Hit 'Y' + RETURN to continue
-    print("\nFinish login sequence. Enter 'y' to continue.")
+    print("\nPress Enter to continue.")
     input()
 
     time.sleep(2)
