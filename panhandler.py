@@ -48,36 +48,48 @@ def scrape(username, password, streamerName, message, userDelay):
         driver.close()
 
     messagedelay = 0;
+    lastuser = ""
     while True:
         users = driver.find_elements_by_xpath('//*[@class="chat-author__display-name"]')
 
         if len(users) > 0:
             user = users[-1]
             userdata = user.get_attribute('data-a-user')
+            if lastuser == userdata:
+                continue
+            
+            lastuser = userdata
+
             if 'bot' in userdata:
                 continue
 
             if userdata not in stored_users:
                 print(userdata)
-                stored_users.append(userdata)
-                usernameFile = open("usernames.txt", "a+")
-                usernameFile.write(userdata)
-                usernameFile.write('\n')
-                # Always close your goddamn files
-                usernameFile.close()
 
                 messagedelay = messagedelay + 1
                 if messagedelay >= userDelay:
-                    print(message + userdata)
-                    user.click()
-                    time.sleep(2)
-                    whisper = user.find_element_by_xpath('//*[@data-test-selector="whisper-button"]')
-                    whisper.click()
-                    time.sleep(2)
+                    stored_users.append(userdata)
+                    usernameFile = open("usernames.txt", "a+")
+                    usernameFile.write(userdata)
+                    usernameFile.write('\n')
+                    # Always close your goddamn files
+                    usernameFile.close()
 
-                    inputField = driver.find_element_by_xpath('//*[@data-a-target="whisper-thread-{}"]'.format(userdata))
-                    inputText = inputField.find_element_by_xpath('.//*[@data-a-target="tw-input"]')
-                    inputText.send_keys(message)
+                    print(message + userdata)
+                    print("Added user data to stored file")
+                    try:
+                        user.click()
+                        time.sleep(2)
+                        whisper = user.find_element_by_xpath('//*[@data-test-selector="whisper-button"]')
+                        whisper.click()
+                        time.sleep(2)
+
+                        inputField = driver.find_element_by_xpath('//*[@data-a-target="whisper-thread-{}"]'.format(userdata))
+                        inputText = inputField.find_element_by_xpath('.//*[@data-a-target="tw-input"]')
+                        inputText.send_keys(message)
+                    except Exception as e:
+                        print("An exception occurred: ", e)
+                        print("Something happened. Let's keep going anyway!")
 
                     messagedelay = 0
 
